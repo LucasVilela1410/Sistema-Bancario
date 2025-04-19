@@ -1,3 +1,8 @@
+from datetime import datetime
+import locale
+
+locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
+
 menu = """
       # MENU #
     [1] Depósito
@@ -10,22 +15,51 @@ menu = """
 saldo_conta = 0.00
 limite = 500.00
 numero_de_saques = 0
+numero_de_transacao = 0
 LIMITE_DE_SAQUE = 3
-extrato = " "
+LIMITE_DE_TRANSACAO = 10
+
+class transacao:
+    def __init__(self, tipo, valor, hora):
+        self.tipo = tipo
+        self.valor = valor
+        self.hora = hora
+
+extrato = []
 
 while True:
     opcao = int(input(menu.center(10)))
+    excedeu_limite_transacao = numero_de_transacao >= LIMITE_DE_TRANSACAO
+    horario_transacao = datetime.now().strftime('%a %d/%m/%Y %H:%M:%S')
     
     # Deposito
     if opcao == 1:
         saldo_deposito = float(input("Digite o Valor desejado: "))
-        if saldo_deposito > 0:
-            saldo_conta += saldo_deposito
-            extrato += f"\n   Depósito Realizado! \n    R${saldo_deposito:.2f} \n==========================="
-            
+        
+        if excedeu_limite_transacao:
+            print("")
+            print("="*43)
+            print("   Você fez o seu Maximo de transações\n   permitidos pelo banco no dia de Hoje,\n   volte Amanhã! \n   Obrigado!")
+            print("="*43)
+        
         else:
-            print("\n===========================\nValor Invalido \n Deposite um valor valido!\n===========================\n")
+            if saldo_deposito > 0:
+                saldo_conta += saldo_deposito
+                numero_de_transacao += 1
+                extrato.append(transacao("Depósito", saldo_deposito, horario_transacao))
+                
+                print("")
+                print("="*30)
+                print("   Deposito efetuado.")
+                print(f"   Saldo R${saldo_conta:.2f}")
+                print("="*30)
             
+            else:
+                print("")
+                print("="*42)
+                print("    Valor Invalido \n    Deposite um valor valido!")
+                print("="*42)
+                
     # Saque
     elif opcao == 2:
         valor_saque = float(input("Digite o valor de seu saque: "))
@@ -34,28 +68,70 @@ while True:
         excedeu_limite = valor_saque > limite
         excedeu_limite_saque = numero_de_saques >=  LIMITE_DE_SAQUE
         
-        if excedeu_limite:
-            print("\n===========================\nInfelizmente essa Valor ultrapassa o Limite permitido por saque!\n===========================\n")
+        if valor_saque > 0:
+            if excedeu_limite_transacao:
+                print("")
+                print("="*42)
+                print("Você fez o seu Maximo de transações permitidos pelo banco no dia de Hoje, Volte Amanhã! \nObrigado!")
+                print("="*42)
             
-        elif excedeu_saldo:
-            print("\n===========================\nValor ultrapassou seu saldo disponivel, acesse seu extrato e verifique seu saldo dispoivel para saque.\n===========================\n")
-        
-        elif excedeu_limite_saque:
-            print("\n===========================\nVocê fez o seu Maximo de saques permitidos pelo banco no dia de Hoje, Volte Amanhã! \nObrigado!\n===========================\n")
-        
+            else:
+                if excedeu_limite:
+                    print("")
+                    print("="*42)
+                    print("   Infelizmente essa Valor ultrapassa o\n   Limite permitido por saque!")
+                    print("="*42)
+                    
+                elif excedeu_saldo:
+                    print("")
+                    print("="*42)
+                    print(" Valor ultrapassou seu saldo disponivel,\n acesse seu extrato e verifique seu\n saldo dispoivel para saque.")
+                    print("="*42)
+                
+                elif excedeu_limite_saque:
+                    print("")
+                    print("="*42)
+                    print("     Você fez o seu Maximo de saques\n     permitidos pelo banco no dia de\n     hoje, volte Amanhã! \n     Obrigado!")
+                    print("="*42)
+                
+                else:
+                    saldo_conta -= valor_saque
+                    numero_de_saques += 1
+                    numero_de_transacao += 1
+                    extrato.append(transacao("Saque", valor_saque, horario_transacao))
+                    
+                    print("")
+                    print("="*30)
+                    print("   Saque efetuado.")
+                    print(f"   Saldo R${saldo_conta:.2f}")
+                    print("="*30)
+                    
         else:
-            saldo_conta -= valor_saque
-            numero_de_saques += 1
-            extrato += f"\n      Saque Realizado! \n      R${valor_saque:.2f} \n==========================="
-    
+            print("")
+            print("="*42)
+            print("    Valor Invalido \n    Insira um valor valido!")
+            print("="*42)
+            
     # Extrato
     elif opcao == 3:
-        if extrato == " ":
-            print("\n===========================\nNão houve movimentações em sua conta \n===========================")
-            print(f"Seu saldo atual é de R${saldo_conta:.2f}\n===========================")
+        if extrato == []:
+            print("")
+            print("="*42)
+            print("Não houve movimentações em sua conta".center(42))
+            print("="*42)
+            print(f"Seu saldo atual é de R${saldo_conta:.2f}".center(42))
+            print("="*42)
         else:
-            print("\n===========================" + extrato)
-            print(f"Seu saldo atual é de R${saldo_conta:.2f}\n===========================")
+            print("")
+            print("="*42)
+            for transacao_obj in extrato:
+                print(f"Tipo: {transacao_obj.tipo.capitalize()}")
+                print(f"Data/Hora: {transacao_obj.hora}")
+                print(f"Valor: R${transacao_obj.valor:.2f}")
+                print("=" * 42)
+            print("="*42)
+            print(f"Seu saldo atual é de R${saldo_conta:.2f}".center(42))
+            print("="*42)
         
     # Sair
     elif opcao == 0:
