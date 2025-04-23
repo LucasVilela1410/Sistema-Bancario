@@ -1,6 +1,13 @@
 from datetime import datetime
 import locale
 
+class transacao:
+    def __init__(self, tipo, valor, hora):
+        self.tipo = tipo
+        self.valor = valor
+        self.hora = hora
+
+
 locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
 
 menu = """
@@ -18,12 +25,6 @@ numero_de_saques = 0
 numero_de_transacao = 0
 LIMITE_DE_SAQUE = 3
 LIMITE_DE_TRANSACAO = 10
-
-class transacao:
-    def __init__(self, tipo, valor, hora):
-        self.tipo = tipo
-        self.valor = valor
-        self.hora = hora
 
 extrato = []
 
