@@ -10,7 +10,122 @@ class transacao:
 
 locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
 
-menu = """
+saldo_conta = 0.00
+limite = 500.00
+numero_de_saques = 0
+numero_de_transacao = 0
+LIMITE_DE_SAQUE = 3
+LIMITE_DE_TRANSACAO = 10
+    
+    
+def Realizar_deposito():
+    saldo_deposito = float(input("Digite o Valor desejado: "))
+    global saldo_conta, numero_de_transacao
+        
+    if excedeu_limite_transacao:
+        print("")
+        print("="*43)
+        print("   Você fez o seu Maximo de transações\n   permitidos pelo banco no dia de Hoje,\n   volte Amanhã! \n   Obrigado!")
+        print("="*43)
+    
+    else:
+        if saldo_deposito > 0:
+            saldo_conta += saldo_deposito
+            numero_de_transacao += 1
+            extrato.append(transacao("Depósito", saldo_deposito, horario_transacao))
+            
+            print("")
+            print("="*30)
+            print("   Deposito efetuado.")
+            print(f"   Saldo R${saldo_conta:.2f}")
+            print("="*30)
+        
+        else:
+            print("")
+            print("="*42)
+            print("    Valor Invalido \n    Deposite um valor valido!")
+            print("="*42)
+    
+
+def Realizar_saque():
+    valor_saque = float(input("Digite o valor de seu saque: "))
+    
+    global saldo_conta, numero_de_saques, numero_de_transacao
+    
+    excedeu_saldo = valor_saque > saldo_conta
+    excedeu_limite = valor_saque > limite
+    excedeu_limite_saque = numero_de_saques >=  LIMITE_DE_SAQUE
+    
+    
+    if valor_saque > 0:
+        if excedeu_limite_transacao:
+            print("")
+            print("="*42)
+            print("Você fez o seu Maximo de transações permitidos pelo banco no dia de Hoje, Volte Amanhã! \nObrigado!")
+            print("="*42)
+        
+        else:
+            if excedeu_limite:
+                print("")
+                print("="*42)
+                print("   Infelizmente essa Valor ultrapassa o\n   Limite permitido por saque!")
+                print("="*42)
+                
+            elif excedeu_saldo:
+                print("")
+                print("="*42)
+                print(" Valor ultrapassou seu saldo disponivel,\n acesse seu extrato e verifique seu\n saldo dispoivel para saque.")
+                print("="*42)
+            
+            elif excedeu_limite_saque:
+                print("")
+                print("="*42)
+                print("     Você fez o seu Maximo de saques\n     permitidos pelo banco no dia de\n     hoje, volte Amanhã! \n     Obrigado!")
+                print("="*42)
+            
+            else:
+                saldo_conta -= valor_saque
+                numero_de_saques += 1
+                numero_de_transacao += 1
+                extrato.append(transacao("Saque", valor_saque, horario_transacao))
+                
+                print("")
+                print("="*30)
+                print("   Saque efetuado.")
+                print(f"   Saldo R${saldo_conta:.2f}")
+                print("="*30)
+                
+    else:
+        print("")
+        print("="*42)
+        print("    Valor Invalido \n    Insira um valor valido!")
+        print("="*42)
+
+
+def Mostrar_extrato():
+    if extrato == []:
+        print("")
+        print("="*42)
+        print("Não houve movimentações em sua conta".center(42))
+        print("="*42)
+        print(f"Seu saldo atual é de R${saldo_conta:.2f}".center(42))
+        print("="*42)
+        
+    else:
+        print("")
+        print("="*42)
+        for transacao_obj in extrato:
+            print(f"Tipo: {transacao_obj.tipo.capitalize()}")
+            print(f"Data/Hora: {transacao_obj.hora}")
+            print(f"Valor: R${transacao_obj.valor:.2f}")
+            print("=" * 42)
+        print("="*42)
+        print(f"Seu saldo atual é de R${saldo_conta:.2f}".center(42))
+        print("="*42)
+    
+
+def main():
+    menu = """
       # MENU #
     [1] Depósito
     [2] Saque
@@ -19,125 +134,32 @@ menu = """
     -------------
     Digite aqui: """
 
-saldo_conta = 0.00
-limite = 500.00
-numero_de_saques = 0
-numero_de_transacao = 0
-LIMITE_DE_SAQUE = 3
-LIMITE_DE_TRANSACAO = 10
+    global excedeu_limite_transacao, horario_transacao, extrato
 
-extrato = []
-
-while True:
-    opcao = int(input(menu.center(10)))
-    excedeu_limite_transacao = numero_de_transacao >= LIMITE_DE_TRANSACAO
-    horario_transacao = datetime.now().strftime('%a %d/%m/%Y %H:%M:%S')
+    extrato = []
     
-    # Deposito
-    if opcao == 1:
-        saldo_deposito = float(input("Digite o Valor desejado: "))
+    while True:
+        opcao = int(input(menu.center(10)))
+        excedeu_limite_transacao = numero_de_transacao >= LIMITE_DE_TRANSACAO
+        horario_transacao = datetime.now().strftime('%a %d/%m/%Y %H:%M:%S')
         
-        if excedeu_limite_transacao:
-            print("")
-            print("="*43)
-            print("   Você fez o seu Maximo de transações\n   permitidos pelo banco no dia de Hoje,\n   volte Amanhã! \n   Obrigado!")
-            print("="*43)
+        # Deposito
+        if opcao == 1:
+            Realizar_deposito()
+                    
+        # Saque
+        elif opcao == 2:
+            Realizar_saque()
+                
+        # Extrato
+        elif opcao == 3:
+            Mostrar_extrato()
+            
+        # Sair
+        elif opcao == 0:
+            break
         
         else:
-            if saldo_deposito > 0:
-                saldo_conta += saldo_deposito
-                numero_de_transacao += 1
-                extrato.append(transacao("Depósito", saldo_deposito, horario_transacao))
-                
-                print("")
-                print("="*30)
-                print("   Deposito efetuado.")
-                print(f"   Saldo R${saldo_conta:.2f}")
-                print("="*30)
-            
-            else:
-                print("")
-                print("="*42)
-                print("    Valor Invalido \n    Deposite um valor valido!")
-                print("="*42)
-                
-    # Saque
-    elif opcao == 2:
-        valor_saque = float(input("Digite o valor de seu saque: "))
-        
-        excedeu_saldo = valor_saque > saldo_conta
-        excedeu_limite = valor_saque > limite
-        excedeu_limite_saque = numero_de_saques >=  LIMITE_DE_SAQUE
-        
-        if valor_saque > 0:
-            if excedeu_limite_transacao:
-                print("")
-                print("="*42)
-                print("Você fez o seu Maximo de transações permitidos pelo banco no dia de Hoje, Volte Amanhã! \nObrigado!")
-                print("="*42)
-            
-            else:
-                if excedeu_limite:
-                    print("")
-                    print("="*42)
-                    print("   Infelizmente essa Valor ultrapassa o\n   Limite permitido por saque!")
-                    print("="*42)
-                    
-                elif excedeu_saldo:
-                    print("")
-                    print("="*42)
-                    print(" Valor ultrapassou seu saldo disponivel,\n acesse seu extrato e verifique seu\n saldo dispoivel para saque.")
-                    print("="*42)
-                
-                elif excedeu_limite_saque:
-                    print("")
-                    print("="*42)
-                    print("     Você fez o seu Maximo de saques\n     permitidos pelo banco no dia de\n     hoje, volte Amanhã! \n     Obrigado!")
-                    print("="*42)
-                
-                else:
-                    saldo_conta -= valor_saque
-                    numero_de_saques += 1
-                    numero_de_transacao += 1
-                    extrato.append(transacao("Saque", valor_saque, horario_transacao))
-                    
-                    print("")
-                    print("="*30)
-                    print("   Saque efetuado.")
-                    print(f"   Saldo R${saldo_conta:.2f}")
-                    print("="*30)
-                    
-        else:
-            print("")
-            print("="*42)
-            print("    Valor Invalido \n    Insira um valor valido!")
-            print("="*42)
-            
-    # Extrato
-    elif opcao == 3:
-        if extrato == []:
-            print("")
-            print("="*42)
-            print("Não houve movimentações em sua conta".center(42))
-            print("="*42)
-            print(f"Seu saldo atual é de R${saldo_conta:.2f}".center(42))
-            print("="*42)
-        else:
-            print("")
-            print("="*42)
-            for transacao_obj in extrato:
-                print(f"Tipo: {transacao_obj.tipo.capitalize()}")
-                print(f"Data/Hora: {transacao_obj.hora}")
-                print(f"Valor: R${transacao_obj.valor:.2f}")
-                print("=" * 42)
-            print("="*42)
-            print(f"Seu saldo atual é de R${saldo_conta:.2f}".center(42))
-            print("="*42)
-        
-    # Sair
-    elif opcao == 0:
-        break
+            print("valor invalido")
     
-    else:
-        print("valor invalido")
-    
+main()
