@@ -16,7 +16,32 @@ numero_de_saques = 0
 numero_de_transacao = 0
 LIMITE_DE_SAQUE = 3
 LIMITE_DE_TRANSACAO = 10
+
+clientes = {}
+contas = []
+extrato = []
+
+def CadastrarCliente(nome, nascimento, CPF, logradoro, numero, bairro, cidade):
     
+    global clientes
+    
+    cliente = {
+        "nome" : nome,
+        "nascimento" : nascimento,
+        "CPF" : CPF ,
+        "endereco" : {
+            "Logradouro" : logradoro,
+            "Numero" : numero,
+            "Bairro" : bairro,
+            "Cidade/UF" : cidade
+        }
+    }
+    
+    clientes[CPF] = cliente
+    print("="*30)
+    print(" Cliente cadastrado com sucesso!".center(30))
+    print("="*30)
+
     
 def Realizar_deposito():
     saldo_deposito = float(input("Digite o Valor desejado: "))
@@ -122,6 +147,18 @@ def Mostrar_extrato():
         print("="*42)
         print(f"Seu saldo atual é de R${saldo_conta:.2f}".center(42))
         print("="*42)
+
+
+def Novo_usuario():
+    nome_cliente = input("Nome completo: ")
+    data_de_nascimento = int(input("Data de nascimento (apenas numeros): "))
+    cpf = input("CPF (apenas numeros): ")
+    logradouro_end = input("Endereço (apenas logradouro): ")
+    numero_end = input("Endereço (apenas Numero + complemento se tiver): ")
+    bairro_end = input("Endereço (apenas bairro): ")
+    Cidade_end = input("Endereço (apenas Cidade e UF, ex = São Paulo/SP): ")
+    
+    CadastrarCliente(nome_cliente, data_de_nascimento, cpf, logradouro_end, numero_end, bairro_end, Cidade_end)
     
 
 def main():
@@ -130,13 +167,16 @@ def main():
     [1] Depósito
     [2] Saque
     [3] Extrato
+    [4] Novo Usuario
+    [5] Criar Conta
+    [6] Listar Contas
     [0] Sair
-    -------------
+    --------------------
     Digite aqui: """
 
-    global excedeu_limite_transacao, horario_transacao, extrato
+    global excedeu_limite_transacao, horario_transacao, extrato, clientes
 
-    extrato = []
+    
     
     while True:
         opcao = int(input(menu.center(10)))
@@ -154,6 +194,15 @@ def main():
         # Extrato
         elif opcao == 3:
             Mostrar_extrato()
+        
+        elif opcao == 4:
+            Novo_usuario()
+        
+        elif opcao == 5:
+            pass   
+        
+        elif opcao == 6:
+            pass
             
         # Sair
         elif opcao == 0:
@@ -161,5 +210,5 @@ def main():
         
         else:
             print("valor invalido")
-    
+
 main()
