@@ -1,4 +1,5 @@
 from datetime import datetime
+from random import randint
 import locale
 
 class transacao:
@@ -18,7 +19,8 @@ LIMITE_DE_SAQUE = 3
 LIMITE_DE_TRANSACAO = 10
 
 clientes = {}
-contas = []
+contas = {}
+contas_correntes = {}
 extrato = []
 
 def CadastrarCliente(nome, nascimento, CPF, logradoro, numero, bairro, cidade):
@@ -42,6 +44,25 @@ def CadastrarCliente(nome, nascimento, CPF, logradoro, numero, bairro, cidade):
     print(" Cliente cadastrado com sucesso!".center(30))
     print("="*30)
 
+
+def GerarNumeroConta():
+    return str(randint(10000000, 99999999))
+
+
+def criar_nova_conta(cpf):
+    """Cria uma nova conta corrente para um cliente com o CPF fornecido."""
+    numero_conta = GerarNumeroConta()
+    while True:
+        if numero_conta not in contas.values():
+            break
+
+    agencia = "0001"
+    banco = "0123"
+    numero_completo = f"{numero_conta}-{randint(0, 9)}"
+
+    contas[cpf] = numero_completo
+    print(f"Conta Corrente Criada com Sucesso, para o cliente {clientes[cpf]['nome']}: Agência {agencia}, Conta {numero_completo}, Banco {banco}")
+    
     
 def Realizar_deposito():
     saldo_deposito = float(input("Digite o Valor desejado: "))
@@ -161,6 +182,31 @@ def Novo_usuario():
     CadastrarCliente(nome_cliente, data_de_nascimento, cpf, logradouro_end, numero_end, bairro_end, Cidade_end)
     
 
+def CriarConta():
+    consultaCPF = input('Digite seu numero de CPF: ')
+            
+    if consultaCPF not in clientes:
+        print("Cliente não localizado, verifique CPF e tente novamente.\nCaso não tenha cadastrado, volte na opção anterior, leva apenas alguns segundos, Obrigado.")
+        
+    elif consultaCPF in contas:
+        print("Vejo que você Já possui uma conta, deseja abrir uma nova?\n   [1] Sim e [2] Não")
+        while True:
+            retorno = int(input())
+            if retorno == 1:
+                criar_nova_conta(consultaCPF)
+                
+                break
+            
+            elif retorno == 2:
+                print("Tudo bem, Obrigado.")
+                break
+            else:
+                print("Ops, esse valor não é valido, digite um valor valido.")
+    
+    else:
+        criar_nova_conta(consultaCPF)
+                
+                
 def main():
     menu = """
       # MENU #
@@ -195,12 +241,15 @@ def main():
         elif opcao == 3:
             Mostrar_extrato()
         
+        # Cadastro Cliente
         elif opcao == 4:
             Novo_usuario()
         
+        # Criar Conta
         elif opcao == 5:
-            pass   
+            CriarConta()
         
+        # Listar Conta
         elif opcao == 6:
             pass
             
