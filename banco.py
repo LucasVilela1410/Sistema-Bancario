@@ -20,7 +20,6 @@ LIMITE_DE_TRANSACAO = 10
 
 clientes = {}
 contas = {}
-contas_correntes = {}
 extrato = []
 
 def CadastrarCliente(nome, nascimento, CPF, logradoro, numero, bairro, cidade):
@@ -59,9 +58,15 @@ def criar_nova_conta(cpf):
     agencia = "0001"
     banco = "0123"
     numero_completo = f"{numero_conta}-{randint(0, 9)}"
+    conta_completa = f"Agência {agencia}, Conta {numero_completo}, Banco {banco}"
+    
+    if cpf in contas:
+        contas[cpf].append(conta_completa)
+        
+    else:
+        contas[cpf] = [conta_completa]
 
-    contas[cpf] = numero_completo
-    print(f"Conta Corrente Criada com Sucesso, para o cliente {clientes[cpf]['nome']}: Agência {agencia}, Conta {numero_completo}, Banco {banco}")
+    print(f"Conta Corrente Criada com Sucesso, para o cliente {clientes[cpf]['nome']}: {conta_completa}")
     
     
 def Realizar_deposito():
@@ -171,25 +176,59 @@ def Mostrar_extrato():
 
 
 def Novo_usuario():
-    nome_cliente = input("Nome completo: ")
-    data_de_nascimento = int(input("Data de nascimento (apenas numeros): "))
-    cpf = input("CPF (apenas numeros): ")
-    logradouro_end = input("Endereço (apenas logradouro): ")
-    numero_end = input("Endereço (apenas Numero + complemento se tiver): ")
-    bairro_end = input("Endereço (apenas bairro): ")
-    Cidade_end = input("Endereço (apenas Cidade e UF, ex = São Paulo/SP): ")
+    print("\n" + "="*70)
+    nome_cliente = input("   Nome completo: ")
+    
+    while True:
+        print("="*70)
+        try:
+            data_de_nascimento = int(input("   Data de nascimento (apenas numeros): "))
+            break
+        except ValueError:
+            print("="*70)
+            print("   Erro: Por favor, digite apenas números para a data de nascimento.")
+    
+    while True:        
+        print("="*70)
+        try:
+            cpf = int(input("   CPF (apenas numeros): "))
+            contagemCPF = len(str(cpf))
+            if contagemCPF < 11 or contagemCPF > 11:
+                print("="*70)
+                print("   Numero de CPF invalido, aplique um CPF valido.")
+            else:
+                break
+        
+        except ValueError:
+            print("="*70)
+            print("   Erro: Por favor, digite apenas números para CPF.")
+            
+    print("="*70)
+    logradouro_end = input("   Endereço (apenas logradouro): ")
+    print("="*70)
+    numero_end = input("   Endereço (apenas Numero + complemento se tiver): ")
+    print("="*70)
+    bairro_end = input("   Endereço (apenas bairro): ")
+    print("="*70)
+    Cidade_end = input("   Endereço (apenas Cidade e UF, ex = São Paulo/SP): ")
+    print("="*70)
     
     CadastrarCliente(nome_cliente, data_de_nascimento, cpf, logradouro_end, numero_end, bairro_end, Cidade_end)
-    
+    print(clientes)
 
 def CriarConta():
-    consultaCPF = input('Digite seu numero de CPF: ')
+    consultaCPF = int(input('Digite seu numero de CPF: '))
             
     if consultaCPF not in clientes:
-        print("Cliente não localizado, verifique CPF e tente novamente.\nCaso não tenha cadastrado, volte na opção anterior, leva apenas alguns segundos, Obrigado.")
+        print("="*70)
+        print("   Cliente não localizado, verifique CPF e tente novamente.\n   Caso não tenha cadastrado, volte na opção anterior, leva apenas\n   alguns segundos, Obrigado.")
+        print("="*70)
         
     elif consultaCPF in contas:
-        print("Vejo que você Já possui uma conta, deseja abrir uma nova?\n   [1] Sim e [2] Não")
+        print("="*70)
+        print("   Vejo que você Já possui uma conta, deseja abrir uma nova?\n   [1] Sim e [2] Não")
+        print("="*70)
+        
         while True:
             retorno = int(input())
             if retorno == 1:
@@ -198,14 +237,30 @@ def CriarConta():
                 break
             
             elif retorno == 2:
-                print("Tudo bem, Obrigado.")
+                print("="*70)
+                print("   Tudo bem, Obrigado.")
+                print("="*70)
                 break
             else:
-                print("Ops, esse valor não é valido, digite um valor valido.")
+                print("="*70)
+                print("   Ops, esse valor não é valido, digite um valor valido.")
+                print("="*70)
     
     else:
         criar_nova_conta(consultaCPF)
-                
+      
+
+def ListarConta():
+    consultaCPF = input('Digite seu numero de CPF: ')
+            
+    if consultaCPF in contas:
+        print(f"Nome cliente: {clientes[consultaCPF]["nome"]}")
+        for conta in contas[consultaCPF]:
+            print(f"=> {conta}")
+    
+    else:
+        print("Nenhum CPF encontrado.")
+        
                 
 def main():
     menu = """
@@ -251,7 +306,7 @@ def main():
         
         # Listar Conta
         elif opcao == 6:
-            pass
+            ListarConta()
             
         # Sair
         elif opcao == 0:
