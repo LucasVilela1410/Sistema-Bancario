@@ -40,7 +40,6 @@ Este é um sistema bancário básico desenvolvido em Python para demonstrar func
 Este é um sistema bem básico! Aqui estão algumas ideias para torná-lo ainda mais interessante:
 
 * **Autenticação:** Implementar um sistema de login com usuário e senha.
-* **Múltiplas Contas:** Permitir a criação e gerenciamento de várias contas.
 * **Transferências:** Adicionar a funcionalidade de transferir fundos entre contas.
 * **Histórico Persistente:** Salvar o histórico de transações em um arquivo para que os dados não sejam perdidos ao fechar o programa.
 * **Interface Gráfica:** Desenvolver uma interface gráfica de usuário (GUI) para uma experiência mais visual e amigável.
